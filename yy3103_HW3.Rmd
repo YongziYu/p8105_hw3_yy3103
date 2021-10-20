@@ -45,7 +45,7 @@ popular_items=
   summarise(count_n=n()) %>%
   arrange(desc(count_n),.by_group=TRUE) %>%
   slice(1:3)
-
+popular_items
 mean_hour = 
   instacart %>%
   filter(product_name=="Pink Lady Apples"|product_name=="Coffee Ice Cream") %>%
@@ -54,9 +54,84 @@ mean_hour =
   summarise(
     mean_hour=mean(order_hour_of_day)) %>%
   select(order_dow,mean_hour)
+mean_hour
 
 ```
+There are ```r nrow(aisle)``` and fresh vegetable is the most items ordered.
+
 # Problem 2
 ```{r}
+data("brfss_smart2010")
 
+#data clean
+brfss=
+  brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  rename(state=locationabbr) %>%
+  filter(topic == "Overall Health",
+         response == "Excellent"|
+         response == "Very Good"|
+         response == "Good"|
+         response == "Fair"|
+         response == "Poor") %>%
+  mutate(response= factor(response,levels=c("Poor","Fair","Good","Very Good","Excellent"))) %>%
+  arrange(response)
+
+location_2002=
+  brfss %>%
+  group_by(year,state) %>%
+  summarise(count=n()) %>%
+  filter (year == "2002",count>=7)
+
+location_2010=
+  brfss %>%
+  group_by(year,state) %>%
+  summarise(count=n()) %>%
+  filter (year == "2010",count>=7)
+
+excellent=
+  brfss %>%
+  filter (response=="Excellent") %>%
+  group_by(year,state) %>%
+  summarise(mean_data=mean(data_value)) %>%
+  arrange(state,year) %>%
+  select (year,state,mean_data)
+
+ggplot(data=excellent,aes(y=mean_data,x=year,color=state))+geom_line()
+
+two_panel=
+  brfss %>%
+  filter (year=="2006"|year=="2010") %>%
+  filter(state=="NY")
+
+
+ggplot(two_panel, aes(x=data_value,y=year,color=response))+geom_point()+
+  facet_grid(year ~.)
 ```
+-In 2002,there are `r pull(location_2002,state)` that are observed at 7 or more locations. In 2010,there are `r pull(location_2010,state)` that are observed at 7 or more locations. 
+
+
+# Problem 3
+```{r}
+acc = 
+  read_csv("./data/accel_data.csv") %>%
+  janitor::clean_names()
+  
+acc_tidy=
+  pivot_longer(
+    acc,
+    activity_1:activity_1440,
+    names_to = "activity", 
+    values_to = "counts") %>%
+  mutate(
+    weekend=ifelse(day == "Saturday" |day=="Sunday","Weekend","Weekday")
+    )
+  
+acc_total = 
+  acc_tidy %>%
+  group_by(week,day_id,day) %>%
+  summarise(total_min=sum(counts))
+
+ggplot(acc_tidy, aes(y=counts,x=activity,color=week))+geom_line()
+```
+
