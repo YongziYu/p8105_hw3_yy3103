@@ -34,9 +34,10 @@ aisle_plot=
   summarise(
     count_order=n()
   ) %>%
+  mutate(aisle=fct_reorder(aisle,count_order)) %>%
   filter(count_order>10000)
 
-ggplot(data=aisle_plot,aes(y=aisle,x=count_order))+geom_point()
+ggplot(data=aisle_plot,aes(y=aisle,x=count_order))+geom_col()
 
 popular_items=
   instacart %>%
@@ -108,7 +109,9 @@ two_panel=
 ggplot(two_panel, aes(x=data_value,y=year,color=response))+geom_point()+
   facet_grid(year ~.)
 ```
--In 2002,there are `r pull(location_2002,state)` that are observed at 7 or more locations. In 2010,there are `r pull(location_2010,state)` that are observed at 7 or more locations. 
+-  In 2002,there are `r pull(location_2002,state)` that are observed at 7 or more locations. 
+
+In 2010,there are `r pull(location_2010,state)` that are observed at 7 or more locations. 
 
 
 # Problem 3
