@@ -46,7 +46,7 @@ popular_items=
   summarise(count_n=n()) %>%
   arrange(desc(count_n),.by_group=TRUE) %>%
   slice(1:3)
-popular_items
+
 mean_hour = 
   instacart %>%
   filter(product_name=="Pink Lady Apples"|product_name=="Coffee Ice Cream") %>%
@@ -55,10 +55,10 @@ mean_hour =
   summarise(
     mean_hour=mean(order_hour_of_day)) %>%
   select(order_dow,mean_hour)
-mean_hour
+
 
 ```
-There are ```r nrow(aisle)``` and fresh vegetable is the most items ordered.
+There are ```r nrow(aisle)``` items and fresh vegetable is the most items ordered.
 
 # Problem 2
 ```{r}
@@ -137,4 +137,8 @@ acc_total =
 
 ggplot(acc_tidy, aes(y=counts,x=activity,color=week))+geom_line()
 ```
+
+- There is not any trends apparent from the total activity.
+
+- There are several similar peaks on some activities from different weeks. 
 
